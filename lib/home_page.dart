@@ -9,17 +9,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final BannerAd myBanner = BannerAd(
-    adUnitId:
-        'ca-app-pub-3940256099942544/6300978111', //TODO: Replace with LIVE unit id
-    size: AdSize.banner,
-    request: const AdRequest(),
-    listener: const BannerAdListener(),
-  );
+  BannerAd? _topBannerAd;
+  BannerAd? _middleBannerAd;
+  BannerAd? _bottomBannerAd;
 
   @override
   void initState() {
-    myBanner.load();
+    BannerAd(
+      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _topBannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _middleBannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _bottomBannerAd = ad as BannerAd;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+        },
+      ),
+    ).load();
     super.initState();
   }
 
@@ -60,7 +100,43 @@ class _HomePageState extends State<HomePage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 20),
                     ),
-                    AdWidget(ad: myBanner),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        children: [
+                          if (_topBannerAd != null)
+                            SizedBox(
+                              width: _topBannerAd!.size.width.toDouble(),
+                              height: _topBannerAd!.size.height.toDouble(),
+                              child: AdWidget(
+                                ad: _topBannerAd!,
+                              ),
+                            ),
+                          if (_middleBannerAd != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: SizedBox(
+                                width: _middleBannerAd!.size.width.toDouble(),
+                                height: _middleBannerAd!.size.height.toDouble(),
+                                child: AdWidget(
+                                  ad: _middleBannerAd!,
+                                ),
+                              ),
+                            ),
+                          if (_bottomBannerAd != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: SizedBox(
+                                width: _bottomBannerAd!.size.width.toDouble(),
+                                height: _bottomBannerAd!.size.height.toDouble(),
+                                child: AdWidget(
+                                  ad: _bottomBannerAd!,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

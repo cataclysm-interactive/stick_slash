@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stick_slash/binders_page.dart';
+import 'package:stick_slash/binders_cards.dart';
 import 'package:stick_slash/search_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -47,7 +47,7 @@ class _LayoutState extends State<Layout> {
     AllCardsPage(
       key: Key("AllCards"),
     ),
-    Binders(
+    BinderPage(
       key: Key("Binders"),
     )
   ];
