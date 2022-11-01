@@ -79,7 +79,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
       },
     );
 
-    // TODO: convert all set names from the API back into their actual names
+    // TODO: Add the rest of the cards from other sets into the API
     loading = false;
 
     setState(() {}); //refresh UI
@@ -139,10 +139,10 @@ class _AllCardsPageState extends State<AllCardsPage> {
                             (e) {
                               return ListTile(
                                 title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
+                                subtitle: Text(e["set"]),
+                                trailing: Text("\$${e["price"]}"),
                                 onTap: () {
-                                  //TODO: Display Information about the card that was
+                                  //TODO: Display Information about the card that was tapped on
                                   print("Tapped!");
                                 },
                               );

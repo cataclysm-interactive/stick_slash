@@ -104,6 +104,10 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.only(top: 10),
                       child: Column(
                         children: [
+                          if (_topBannerAd == null)
+                            CircularProgressIndicator(
+                              color: Colors.red[600],
+                            ),
                           if (_topBannerAd != null)
                             SizedBox(
                               width: _topBannerAd!.size.width.toDouble(),
