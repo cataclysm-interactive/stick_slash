@@ -152,14 +152,14 @@ class _HomePageState extends State<HomePage> {
           const Card(
             child: SizedBox(
               width: 350,
-              height: 250,
+              height: 150,
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(
-                    "Hey, do you like this app? Wanna see more of my work? Take a look at my github profile: https://github.com/untold-titan. There you can find all my past, present and future work, and sponsor it too!",
+                    "Hey, do you like this app? Wanna see more of my work? Take a look at my GitHub profile: https://github.com/untold-titan. There you can find all my past, present and future work, and sponsor it too!",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 15),
                   ),
                 ),
               ),
