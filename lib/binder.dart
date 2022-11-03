@@ -48,6 +48,7 @@ class _BinderPageState extends State<BinderPage> {
           foregroundColor: Colors.white,
         ),
         body: ListView(
+          //TODO: Implement ExpansionLists to sort by set (Flow of Time, etc.)
           children: widget.binder.keys.map<ListTile>(
             (e) {
               return ListTile(

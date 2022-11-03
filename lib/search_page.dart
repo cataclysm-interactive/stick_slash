@@ -19,6 +19,8 @@ class _AllCardsPageState extends State<AllCardsPage> {
   var apidata; //for decoded JSON data
   // It's JSON data from my API, and I don't feel like writing a type for it
 
+  List cardsFinal = []; //This var should NEVER CHANGE from its original value
+
   List cards2015 = [];
   List cards2016 = [];
   List cards2017 = [];
@@ -28,6 +30,8 @@ class _AllCardsPageState extends State<AllCardsPage> {
   List cards2021 = [];
   List cardsCanada = [];
   List cards2022 = [];
+
+  List<List> cardArrays = [];
 
   List<String> setNames = <String>[""];
 
@@ -82,6 +86,20 @@ class _AllCardsPageState extends State<AllCardsPage> {
     // TODO: Add the rest of the cards from other sets into the API
     loading = false;
 
+    //MUST BE IN THE SAME ORDER AS THE TABS IN THE APP BAR
+    cardArrays.add(cards2015);
+    cardArrays.add(cards2016);
+    cardArrays.add(cards2017);
+    cardArrays.add(cards2018);
+    cardArrays.add(cards2019);
+    cardArrays.add(cards2020);
+    cardArrays.add(cards2021);
+    cardArrays.add(cardsCanada);
+    cardArrays.add(cards2022);
+
+    //This is because cardArrays will be modified and changed as time goes on.
+    cardsFinal = cardArrays;
+
     setState(() {}); //refresh UI
   }
 
@@ -133,102 +151,30 @@ class _AllCardsPageState extends State<AllCardsPage> {
                 child: error
                     ? Text("Error: $errmsg")
                     : TabBarView(
-                        children: <Widget>[
-                          ListView(
-                              children: cards2015.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(e["set"]),
-                                trailing: Text("\$${e["price"]}"),
-                                onTap: () {
-                                  //TODO: Display Information about the card that was tapped on
-                                  print("Tapped!");
-                                },
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2016.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2017.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2018.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2019.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2020.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2021.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cardsCanada.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                          ListView(
-                              children: cards2022.map<Widget>(
-                            (e) {
-                              return ListTile(
-                                title: Text(e["playerName"]),
-                                subtitle: Text(
-                                    "${e["set"]}          \$${e["price"]}"),
-                              );
-                            },
-                          ).toList()),
-                        ],
+                        children: cardArrays
+                            .map(
+                              (cardArray) => ListView(
+                                children: cardArray
+                                    .map(
+                                      (card) => ListTile(
+                                        title: Text(
+                                          card["playerName"],
+                                        ),
+                                        subtitle: Text(
+                                          card["set"],
+                                        ),
+                                        trailing: Text(
+                                          "\$${card["price"].toString()}",
+                                        ),
+                                        onTap: () {
+                                          //TODO: Display information about the card
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                            )
+                            .toList(),
                       ),
               ),
         floatingActionButton: FloatingActionButton(
@@ -244,6 +190,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: const <Widget>[
+                        //TODO: Implement filtering options
                         Text("Bottom Sheet"),
                       ],
                     ),

@@ -78,7 +78,6 @@ class _LayoutState extends State<Layout> {
             icon: Icon(Icons.list),
             label: "Binders",
           ),
-          // TODO: Add Settings
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
