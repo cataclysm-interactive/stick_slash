@@ -21,10 +21,10 @@ class _AllCardsPageState extends State<AllCardsPage> {
   // It's JSON data from my API, and I don't feel like writing a type for it
 
   Map<String, List> cards = {};
-
-  List<String> setNames = [];
+  Map<String, List> cardsFinal = {};
 
   String setFilterValue = "All";
+  List<String> setNames = [];
 
   @override
   void initState() {
@@ -53,14 +53,61 @@ class _AllCardsPageState extends State<AllCardsPage> {
       if (cards[card["year"]] == null) {
         cards[card["year"]] = [];
         cards[card["year"]]!.add(card);
+        cardsFinal[card["year"]] = [];
+        cardsFinal[card["year"]]!.add(card);
       } else {
         cards[card["year"]]!.add(card);
+        cardsFinal[card["year"]]!.add(card);
+      }
+      bool foundSet = false;
+      for (var set in setNames) {
+        if (set == card["set"]) {
+          foundSet = true;
+        }
+      }
+      if (foundSet != true) {
+        setNames.add(card["set"]);
       }
     }
 
     loading = false;
 
     setState(() {}); //refresh UI
+  }
+
+  resetCards() {
+    // cards = {...cardsFinal};
+    print(cardsFinal["2015"]!.length);
+    print(cards["2015"]!.length);
+  }
+
+  filterCards() {
+    resetCards();
+    // loading = true;
+    setState(() {});
+
+    Map<String, List> cardsToRemove = {};
+    for (var year in cards.keys) {
+      cardsToRemove[year] = [];
+      for (var card in cards[year]!) {
+        if (card["set"] != setFilterValue && setFilterValue != "All") {
+          cardsToRemove[year]!.add(card);
+        }
+      }
+    }
+
+    for (var year in cardsToRemove.keys) {
+      for (var card in cardsToRemove[year]!) {
+        print("Removing Cards");
+        cards[year]!.remove(card);
+      }
+    }
+
+    // loading = false;
+
+    cards = cards;
+
+    setState(() {});
   }
 
   @override
@@ -128,45 +175,48 @@ class _AllCardsPageState extends State<AllCardsPage> {
                   ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            showBottomSheet(
-              context: context,
-              builder: (BuildContext context) {
-                return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Container(
-                      height: 300,
-                      color: Colors.red[700],
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            DropdownButton<String>(
-                              value: setFilterValue,
-                              items: setNames
-                                  .map<DropdownMenuItem<String>>(
-                                    (e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (String? val) {
-                                setFilterValue = val!;
-                                setState(() {});
-                                print(setFilterValue);
-                                // filterCards();
-                              },
-                            ),
-                            const Text("Bottom Sheet"),
-                          ],
+            if (loading == false) {
+              showBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                      return Container(
+                        height: 300,
+                        color: Colors.red[700],
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              DropdownButton<String>(
+                                value: setFilterValue,
+                                items: setNames
+                                    .map<DropdownMenuItem<String>>(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(e),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (String? val) {
+                                  setFilterValue = val!;
+                                  setState(() {});
+                                  filterCards();
+                                  print(setFilterValue);
+                                  // filterCards();
+                                },
+                              ),
+                              const Text("Bottom Sheet"),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
+                      );
+                    },
+                  );
+                },
+              );
+            }
           },
           backgroundColor: Colors.red[600],
           child: const Icon(Icons.filter_list),
