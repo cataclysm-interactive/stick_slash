@@ -157,6 +157,7 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(
+                    //TODO: Make this github link a button or actual tapable link
                     "Hey, do you like this app? Wanna see more of my work? Take a look at my GitHub profile: https://github.com/untold-titan. There you can find all my past, present and future work, and sponsor it too!",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 15),

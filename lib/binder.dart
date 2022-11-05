@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 class BinderPage extends StatefulWidget {
   const BinderPage({super.key, required this.binder, required this.title});
 
-  final Map<String, bool> binder;
+  final List binder;
   final String title;
 
   @override
@@ -48,15 +48,15 @@ class _BinderPageState extends State<BinderPage> {
           foregroundColor: Colors.white,
         ),
         body: ListView(
-          //TODO: Implement ExpansionLists to sort by set (Flow of Time, etc.)
-          children: widget.binder.keys.map<ListTile>(
+          children: widget.binder.map<ListTile>(
             (e) {
               return ListTile(
-                title: Text(e),
+                title: Text(e["playerName"]),
+                subtitle: Text(e["set"]),
                 trailing: Checkbox(
-                  value: widget.binder[e],
+                  value: e["owned"],
                   onChanged: ((value) {
-                    widget.binder[e] = value!;
+                    e["owned"] = value!;
                     setState(() {});
                   }),
                 ),

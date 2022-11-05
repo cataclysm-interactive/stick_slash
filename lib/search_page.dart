@@ -77,8 +77,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
 
   resetCards() {
     // cards = {...cardsFinal};
-    print(cardsFinal["2015"]!.length);
-    print(cards["2015"]!.length);
+    //TODO: Find a way to reset the cards array without pointing to cardsFinal
   }
 
   filterCards() {
@@ -98,7 +97,6 @@ class _AllCardsPageState extends State<AllCardsPage> {
 
     for (var year in cardsToRemove.keys) {
       for (var card in cardsToRemove[year]!) {
-        print("Removing Cards");
         cards[year]!.remove(card);
       }
     }
@@ -163,6 +161,8 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                                 "   " +
                                                 card["year"]),
                                             onTap: () {
+                                              //TODO: View information for cards when tapped
+                                              // ignore: avoid_print
                                               print("Tapped");
                                             },
                                           ),
@@ -202,12 +202,12 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                 onChanged: (String? val) {
                                   setFilterValue = val!;
                                   setState(() {});
-                                  filterCards();
-                                  print(setFilterValue);
+                                  // TODO: actually implement filtering.
                                   // filterCards();
                                 },
                               ),
-                              const Text("Bottom Sheet"),
+                              const Text(
+                                  "Filtering is currently being worked on, it is not fully functional"),
                             ],
                           ),
                         ),

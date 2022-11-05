@@ -6,18 +6,6 @@ import "package:flutter/material.dart";
 import 'package:path_provider/path_provider.dart';
 import "binder.dart";
 
-const List<String> years = [
-  "2015",
-  "2016",
-  "2017",
-  "2018",
-  "2019",
-  "2020",
-  "2021",
-  "2021-Can",
-  "2022"
-];
-
 class Binder extends StatefulWidget {
   const Binder({super.key});
 
@@ -27,10 +15,11 @@ class Binder extends StatefulWidget {
 
 class _BinderState extends State<Binder> {
   Dio dio = Dio();
-  List<Map<String, bool>> binders = List.empty(growable: true);
-  List<String> binderNames = [];
+  Map<String, List> binders = {}; //The key is the binder's name
 
-  String dropdownValue = years.first;
+  List<String> years = [];
+
+  String dropdownValue = "";
   String textboxValue = "";
 
   bool loading = false;
@@ -43,47 +32,50 @@ class _BinderState extends State<Binder> {
     folder.forEach((element) {
       File file = File(element.path);
       String str = file.readAsStringSync();
-      Map<String, dynamic> jsonData = jsonDecode(str);
-      Map<String, bool> binder = {};
-      for (var element in jsonData.keys) {
-        if (jsonData[element] == false) {
-          binder[element] = false;
-        } else {
-          binder[element] = true;
-        }
-      }
       List<String> pathSplit = file.path.split("/");
-      binderNames.add(pathSplit[pathSplit.length - 1].replaceAll(".json", ""));
-      binders.add(binder);
+      String binderName =
+          pathSplit[pathSplit.length - 1].replaceAll(".json", "");
+      binders[binderName] = jsonDecode(str);
     });
     loadedFromDisk = true;
     setState(() {});
   }
 
+  void getYears() async {
+    Response res =
+        await dio.get("https://timhortonsapi.azurewebsites.net/api/years");
+    var apidata = res.data;
+    for (var e in apidata) {
+      years.add(e["yearStr"]);
+    }
+    dropdownValue = years.first;
+  }
+
   @override
   void initState() {
+    getYears();
     loadBindersFromDisk();
     super.initState();
   }
 
   createNewBinder() async {
     loading = true;
-
     setState(() {});
 
-    Map<String, bool> binder = {};
+    // Create the binder
+    binders[textboxValue] = [];
 
     Response res = await dio.get(
         "https://timhortonsapi.azurewebsites.net/api/hockeycards/$dropdownValue");
     // ignore: unused_local_variable
     var apidata = res.data;
 
-    apidata.forEach(
-        (element) => {binder[element["playerName"].toString()] = false});
-
     //The user has to actually open and then back out of the binder to save changes.
-    binderNames.add("$textboxValue-$dropdownValue");
-    binders.add(binder);
+    apidata.forEach((element) {
+      element["owned"] = false; //Init the checklist part.
+      binders[textboxValue]!.add(element);
+    });
+
     loading = false;
     setState(() {});
   }
@@ -200,7 +192,7 @@ class _BinderState extends State<Binder> {
                 );
               } else {
                 return Column(
-                  children: binders.map<Card>(
+                  children: binders.keys.map<Card>(
                     (e) {
                       return Card(
                         clipBehavior: Clip.hardEdge,
@@ -211,8 +203,9 @@ class _BinderState extends State<Binder> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => BinderPage(
-                                    binder: e,
-                                    title: binderNames[binders.indexOf(e)]),
+                                  binder: binders[e]!,
+                                  title: e.toString(),
+                                ),
                               ),
                             );
                           },
@@ -220,7 +213,7 @@ class _BinderState extends State<Binder> {
                             height: 50,
                             width: MediaQuery.of(context).size.width,
                             child: Center(
-                              child: Text(binderNames[binders.indexOf(e)]),
+                              child: Text(e),
                             ),
                           ),
                         ),
