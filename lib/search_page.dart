@@ -20,7 +20,12 @@ class _AllCardsPageState extends State<AllCardsPage> {
   var apidata; //for decoded JSON data
   // It's JSON data from my API, and I don't feel like writing a type for it
 
+  // Data structure:
+  // Map contains each year
+  // year == String/Key
+  // Each year corresponds to a List of cards
   Map<String, List> cards = {};
+  //an immutable copy of the cards
   Map<String, List> cardsFinal = {};
 
   String setFilterValue = "All";
@@ -33,7 +38,6 @@ class _AllCardsPageState extends State<AllCardsPage> {
   }
 
   getData() async {
-    //TODO: Remake the sorting algorythmn to actually sort the cards properly, and nicely
     setNames.add("All");
     loading = true; //make loading true to show progressindicator
     setState(() {});
@@ -76,13 +80,18 @@ class _AllCardsPageState extends State<AllCardsPage> {
   }
 
   resetCards() {
-    // cards = {...cardsFinal};
-    //TODO: Find a way to reset the cards array without pointing to cardsFinal
+    //I don't know how, but this works
+    for (var year in cardsFinal.keys) {
+      cards[year] = [];
+      for (var card in cardsFinal[year]!) {
+        cards[year]!.add(card);
+      }
+    }
   }
 
   filterCards() {
     resetCards();
-    // loading = true;
+    loading = true;
     setState(() {});
 
     Map<String, List> cardsToRemove = {};
@@ -101,10 +110,8 @@ class _AllCardsPageState extends State<AllCardsPage> {
       }
     }
 
-    // loading = false;
-
+    loading = false;
     cards = cards;
-
     setState(() {});
   }
 
@@ -173,6 +180,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                 .toList(),
                           ),
                   ),
+        //TODO: Filter the cards
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (loading == false) {
@@ -202,8 +210,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                 onChanged: (String? val) {
                                   setFilterValue = val!;
                                   setState(() {});
-                                  // TODO: actually implement filtering.
-                                  // filterCards();
+                                  filterCards();
                                 },
                               ),
                               const Text(
