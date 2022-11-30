@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     BannerAd(
-      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      adUnitId: "ca-app-pub-9636577749309906/6245736421",
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
       ),
     ).load();
     BannerAd(
-      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      adUnitId: "ca-app-pub-9636577749309906/6437609439",
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(
@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
       ),
     ).load();
     BannerAd(
-      adUnitId: "ca-app-pub-3940256099942544/6300978111",
+      adUnitId: "ca-app-pub-9636577749309906/9706993345",
       request: const AdRequest(),
       size: AdSize.banner,
       listener: BannerAdListener(

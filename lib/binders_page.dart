@@ -43,7 +43,7 @@ class _BinderState extends State<Binder> {
 
   void getYears() async {
     Response res =
-        await dio.get("https://timhortonsapi.azurewebsites.net/api/years");
+        await dio.get("https://stickslash-api.azurewebsites.net/api/years");
     var apidata = res.data;
     for (var e in apidata) {
       years.add(e["yearStr"]);
@@ -66,7 +66,7 @@ class _BinderState extends State<Binder> {
     binders[textboxValue] = [];
 
     Response res = await dio.get(
-        "https://timhortonsapi.azurewebsites.net/api/hockeycards/$dropdownValue");
+        "https://stickslash-api.azurewebsites.net/api/hockeycards/$dropdownValue");
     // ignore: unused_local_variable
     var apidata = res.data;
 

@@ -42,7 +42,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
     loading = true; //make loading true to show progressindicator
     setState(() {});
 
-    String baseUrl = "https://timhortonsapi.azurewebsites.net/api/";
+    String baseUrl = "https://stickslash-api.azurewebsites.net/api/";
 
     Response cardsRes = await dio.get('${baseUrl}hockeycards');
     var cardData = cardsRes.data;
@@ -115,10 +115,31 @@ class _AllCardsPageState extends State<AllCardsPage> {
     setState(() {});
   }
 
+  showCardOnTap() {
+    showBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              height: 500,
+              color: Colors.red[700],
+              child: const Center(
+                child: Image(
+                  image: AssetImage("card-images/drake.jpg"),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 9,
+      length: cards.keys.length,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("All Cards"),
@@ -168,9 +189,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                                 "   " +
                                                 card["year"]),
                                             onTap: () {
-                                              //TODO: View information for cards when tapped
-                                              // ignore: avoid_print
-                                              print("Tapped");
+                                              showCardOnTap();
                                             },
                                           ),
                                         )
@@ -194,27 +213,56 @@ class _AllCardsPageState extends State<AllCardsPage> {
                         color: Colors.red[700],
                         child: Center(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              DropdownButton<String>(
-                                value: setFilterValue,
-                                items: setNames
-                                    .map<DropdownMenuItem<String>>(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(e),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (String? val) {
-                                  setFilterValue = val!;
-                                  setState(() {});
-                                  filterCards();
-                                },
+                              const Padding(
+                                padding: EdgeInsets.only(top: 10.0),
+                                child: Text(
+                                  "Filters",
+                                  textScaleFactor: 2,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                              const Text(
-                                  "Filtering is currently being worked on, it is not fully functional"),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 10),
+                                      child: Text(
+                                        "Set:",
+                                        textScaleFactor: 1.1,
+                                      ),
+                                    ),
+                                    DropdownButton<String>(
+                                      value: setFilterValue,
+                                      items: setNames
+                                          .map<DropdownMenuItem<String>>(
+                                            (e) => DropdownMenuItem(
+                                              value: e,
+                                              child: Text(e),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (String? val) {
+                                        setFilterValue = val!;
+                                        setState(() {});
+                                        filterCards();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 30,
+                                ),
+                                child: Text(
+                                  "Filtering is currently in beta, if you have improvements you'd like to see, send your idea to gamerdev2020@gmail.com",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
                             ],
                           ),
                         ),

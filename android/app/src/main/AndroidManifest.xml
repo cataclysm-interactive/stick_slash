@@ -2,7 +2,7 @@
     package="com.example.stick_slash">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="stick_slash"
+        android:label="Stick Slash"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
             <meta-data
