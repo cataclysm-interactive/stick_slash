@@ -108,6 +108,9 @@ class _AllCardsPageState extends State<AllCardsPage> {
       for (var card in cardsToRemove[year]!) {
         cards[year]!.remove(card);
       }
+      if (cards[year]!.isEmpty) {
+        cards.remove(year);
+      }
     }
 
     loading = false;
