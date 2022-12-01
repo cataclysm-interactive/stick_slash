@@ -55,6 +55,7 @@ class _BinderPageState extends State<BinderPage> {
                 subtitle: Text(e["set"]),
                 trailing: Checkbox(
                   value: e["owned"],
+                  checkColor: Colors.red[600],
                   onChanged: ((value) {
                     e["owned"] = value!;
                     setState(() {});

@@ -1,15 +1,30 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:stick_slash/binders_page.dart';
 import 'package:stick_slash/search_page.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
+import 'firebase_options.dart';
 import 'home_page.dart';
+
+// ...
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-
+  initFirebase();
   runApp(const MyApp());
+}
+
+initFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // ignore: unused_local_variable
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 }
 
 class MyApp extends StatelessWidget {

@@ -115,8 +115,10 @@ class _HomePageState extends State<HomePage> {
                             SizedBox(
                               width: _topBannerAd!.size.width.toDouble(),
                               height: _topBannerAd!.size.height.toDouble(),
-                              child: AdWidget(
-                                ad: _topBannerAd!,
+                              child: StatefulBuilder(
+                                builder: (context, state) => AdWidget(
+                                  ad: _topBannerAd!,
+                                ),
                               ),
                             ),
                           if (_middleBannerAd != null)
@@ -125,8 +127,10 @@ class _HomePageState extends State<HomePage> {
                               child: SizedBox(
                                 width: _middleBannerAd!.size.width.toDouble(),
                                 height: _middleBannerAd!.size.height.toDouble(),
-                                child: AdWidget(
-                                  ad: _middleBannerAd!,
+                                child: StatefulBuilder(
+                                  builder: (context, state) => AdWidget(
+                                    ad: _middleBannerAd!,
+                                  ),
                                 ),
                               ),
                             ),
@@ -136,8 +140,10 @@ class _HomePageState extends State<HomePage> {
                               child: SizedBox(
                                 width: _bottomBannerAd!.size.width.toDouble(),
                                 height: _bottomBannerAd!.size.height.toDouble(),
-                                child: AdWidget(
-                                  ad: _bottomBannerAd!,
+                                child: StatefulBuilder(
+                                  builder: (context, state) => AdWidget(
+                                    ad: _bottomBannerAd!,
+                                  ),
                                 ),
                               ),
                             ),

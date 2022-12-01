@@ -126,7 +126,13 @@ class _AllCardsPageState extends State<AllCardsPage> {
               color: Colors.red[700],
               child: const Center(
                 child: Image(
-                  image: AssetImage("card-images/drake.jpg"),
+                  //TODO: Finish Scanning the rest of the cards
+
+                  //Need to decide to host the images on a server, or package them all with the application.
+                  //If hosting online, I need a placeholder, either way because some cards I wont be able to scan.
+                  //TODO: Change this to the NoImage placeholder once I've scanned all the images.
+                  image: AssetImage("card-images/Placeholder-InProgress.jpg"),
+                  //TODO: Add more information about said card. might need to make a whole other page for it.
                 ),
               ),
             );
@@ -199,7 +205,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                                 .toList(),
                           ),
                   ),
-        //TODO: Filter the cards
+        //TODO: Add more filters
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (loading == false) {
