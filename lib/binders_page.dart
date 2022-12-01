@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import "package:flutter/material.dart";
 import 'package:path_provider/path_provider.dart';
 import "binder.dart";
@@ -77,6 +78,31 @@ class _BinderState extends State<Binder> {
     });
 
     loading = false;
+
+    FirebaseAnalytics.instance.logEvent(
+      name: "create_binder",
+      parameters: {"name": textboxValue, "year": dropdownValue},
+    );
+
+    setState(() {});
+  }
+
+  deleteBinder(String title) async {
+    final directory = await getApplicationDocumentsDirectory();
+    Directory finalPath = Directory("${directory.path}/Binders");
+    if (finalPath.existsSync() == false) {
+      await finalPath.create();
+      //I sure hope this code never gets called, cause something SERIOUSLY wrong would have to happen
+    }
+    File file = File("${directory.path}/Binders/$title.json");
+    await file.delete();
+
+    FirebaseAnalytics.instance.logEvent(
+      name: "delete_binder",
+      parameters: {"name": title, "year": binders[title]?[0]["year"]},
+    );
+
+    binders.remove(title);
     setState(() {});
   }
 
@@ -106,8 +132,9 @@ class _BinderState extends State<Binder> {
                             child: SizedBox(
                               width: 250,
                               child: TextField(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  focusColor: Colors.red[700],
+                                  border: const OutlineInputBorder(),
                                   labelText: "Binder Name",
                                 ),
                                 onChanged: (String value) {
@@ -138,9 +165,11 @@ class _BinderState extends State<Binder> {
                                         .toList(),
                                     value: dropdownValue,
                                     onChanged: (String? val) {
-                                      setState(() {
-                                        dropdownValue = val!;
-                                      });
+                                      setState(
+                                        () {
+                                          dropdownValue = val!;
+                                        },
+                                      );
                                     },
                                   ),
                                 ],
@@ -149,8 +178,8 @@ class _BinderState extends State<Binder> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
                               createNewBinder();
+                              Navigator.of(context).pop();
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateColor.resolveWith(
@@ -198,6 +227,46 @@ class _BinderState extends State<Binder> {
                         clipBehavior: Clip.hardEdge,
                         child: InkWell(
                           splashColor: Colors.red[600]?.withAlpha(30),
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SimpleDialog(
+                                  children: [
+                                    const Center(
+                                      child: Text(
+                                        "Delete this Binder?",
+                                        textScaleFactor: 1.2,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          MaterialButton(
+                                            onPressed: () {
+                                              deleteBinder(e.toString());
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Yes"),
+                                          ),
+                                          MaterialButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            color: Colors.red[600],
+                                            child: const Text("No"),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                          },
                           onTap: () {
                             Navigator.push(
                               context,
