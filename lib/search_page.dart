@@ -131,7 +131,7 @@ class _AllCardsPageState extends State<AllCardsPage> {
                   //Need to decide to host the images on a server, or package them all with the application.
                   //If hosting online, I need a placeholder, either way because some cards I wont be able to scan.
                   //TODO: Change this to the NoImage placeholder once I've scanned all the images.
-                  image: AssetImage("card-images/Placeholder-InProgress.jpg"),
+                  image: AssetImage("card-images/progress.png"),
                   //TODO: Add more information about said card. might need to make a whole other page for it.
                 ),
               ),
