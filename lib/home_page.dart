@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
+
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -81,9 +83,13 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(
-                    //TODO: Add news here, ask the users what I should put here.
-                    "I need ideas of things to put on this page. If you want to see something in particular here, feel free to send me an email at gamerdev2020@gmail.com",
-                    textAlign: TextAlign.center,
+                    //TODO: Update the patch notes BEFORE each update
+                    //Also could hook this up to the API to allow it to be updated wirelessly
+                    "Version 1.0.3 Patch Notes \n" +
+                        "- Fixed a bunch of crashes\n" +
+                        "- Added Total Value to binders page\n" +
+                        "- Adjusted Filters\n" +
+                        "- Fixed Firebase Analytics",
                     style: TextStyle(fontSize: 20),
                   ),
                 ),
@@ -163,8 +169,11 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.all(8.0),
                 child: Center(
                   child: Text(
-                    //TODO: Make this github link a button or actual tapable link
-                    "Hey, do you like this app? Wanna see more of my work? Take a look at my GitHub profile: https://github.com/untold-titan. There you can find all my past, present and future work, and sponsor it too!",
+                    "Hey, do you like this app? Wanna see more of my work?" +
+                        "Take a look at my GitHub profile: untold-titan. " +
+                        "There you can find all my past, present and future work, " +
+                        "and sponsor it too! Feedback can be left on the Google Play Store, " +
+                        "or on the GitHub Repository, or emailed to me directly at gamerdev2020@gmail.com",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 15),
                   ),
@@ -172,6 +181,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+          //TODO: Add Social media links. Discord, Reddit, Github.
         ],
       ),
     );

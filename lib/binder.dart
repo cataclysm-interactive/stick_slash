@@ -52,7 +52,7 @@ class _BinderPageState extends State<BinderPage> {
             (e) {
               return ListTile(
                 title: Text(e["playerName"]),
-                subtitle: Text(e["set"]),
+                subtitle: Text(e["set"] + "    \$" + e["price"].toString()),
                 trailing: Checkbox(
                   value: e["owned"],
                   checkColor: Colors.red[600],

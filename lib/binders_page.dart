@@ -15,13 +15,19 @@ class Binder extends StatefulWidget {
 }
 
 class _BinderState extends State<Binder> {
+  //HTTP Client
   Dio dio = Dio();
-  Map<String, List> binders = {}; //The key is the binder's name
+  //The key is the binder's name
+  Map<String, List> binders = {};
+  //Set to the value of the binder's price.
+  Map<String, double> binderPrices = {};
+
+  double totalValue = 0;
 
   List<String> years = [];
 
-  String dropdownValue = "";
-  String textboxValue = "";
+  String yearDropdownValue = "";
+  String binderName = "";
 
   bool loading = false;
   bool loadedFromDisk = false;
@@ -29,15 +35,29 @@ class _BinderState extends State<Binder> {
   void loadBindersFromDisk() async {
     final dir = await getApplicationDocumentsDirectory();
     Directory binderDir = Directory("${dir.path}/Binders");
-    var folder = binderDir.list();
-    folder.forEach((element) {
-      File file = File(element.path);
-      String str = file.readAsStringSync();
-      List<String> pathSplit = file.path.split("/");
-      String binderName =
-          pathSplit[pathSplit.length - 1].replaceAll(".json", "");
-      binders[binderName] = jsonDecode(str);
-    });
+    if (binderDir.existsSync()) {
+      var folder = binderDir.list();
+      folder.forEach(
+        (element) {
+          //Actually loading the binder into memory
+          File file = File(element.path);
+          String str = file.readAsStringSync();
+          List<String> pathSplit = file.path.split("/");
+          String binderName =
+              pathSplit[pathSplit.length - 1].replaceAll(".json", "");
+          binders[binderName] = jsonDecode(str);
+          binderPrices[binderName] = 0;
+          //Calculating the value of the binder
+          binders[binderName]?.forEach((card) {
+            if (card["owned"] == true) {
+              binderPrices[binderName] =
+                  card["price"] + binderPrices[binderName];
+              totalValue += card["price"];
+            }
+          });
+        },
+      );
+    }
     loadedFromDisk = true;
     setState(() {});
   }
@@ -49,9 +69,10 @@ class _BinderState extends State<Binder> {
     for (var e in apidata) {
       years.add(e["yearStr"]);
     }
-    dropdownValue = years.first;
+    yearDropdownValue = years.first;
   }
 
+  //TODO: Make a way for this widget to know when it's been nav'd back to, to update the binders' prices and totalValue
   @override
   void initState() {
     getYears();
@@ -64,24 +85,24 @@ class _BinderState extends State<Binder> {
     setState(() {});
 
     // Create the binder
-    binders[textboxValue] = [];
+    binders[binderName] = [];
 
     Response res = await dio.get(
-        "https://stickslash-api.azurewebsites.net/api/hockeycards/$dropdownValue");
+        "https://stickslash-api.azurewebsites.net/api/hockeycards/$yearDropdownValue");
     // ignore: unused_local_variable
     var apidata = res.data;
 
     //The user has to actually open and then back out of the binder to save changes.
     apidata.forEach((element) {
       element["owned"] = false; //Init the checklist part.
-      binders[textboxValue]!.add(element);
+      binders[binderName]!.add(element);
     });
 
     loading = false;
 
     FirebaseAnalytics.instance.logEvent(
       name: "create_binder",
-      parameters: {"name": textboxValue, "year": dropdownValue},
+      parameters: {"name": binderName, "year": yearDropdownValue},
     );
 
     setState(() {});
@@ -139,7 +160,7 @@ class _BinderState extends State<Binder> {
                                 ),
                                 onChanged: (String value) {
                                   setState(() {
-                                    textboxValue = value;
+                                    binderName = value;
                                   });
                                 },
                               ),
@@ -163,11 +184,11 @@ class _BinderState extends State<Binder> {
                                           ),
                                         )
                                         .toList(),
-                                    value: dropdownValue,
+                                    value: yearDropdownValue,
                                     onChanged: (String? val) {
                                       setState(
                                         () {
-                                          dropdownValue = val!;
+                                          yearDropdownValue = val!;
                                         },
                                       );
                                     },
@@ -221,74 +242,105 @@ class _BinderState extends State<Binder> {
                 );
               } else {
                 return Column(
-                  children: binders.keys.map<Card>(
-                    (e) {
-                      return Card(
-                        clipBehavior: Clip.hardEdge,
-                        child: InkWell(
-                          splashColor: Colors.red[600]?.withAlpha(30),
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SimpleDialog(
-                                  children: [
-                                    const Center(
-                                      child: Text(
-                                        "Delete this Binder?",
-                                        textScaleFactor: 1.2,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          MaterialButton(
-                                            onPressed: () {
-                                              deleteBinder(e.toString());
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("Yes"),
-                                          ),
-                                          MaterialButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            color: Colors.red[600],
-                                            child: const Text("No"),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BinderPage(
-                                  binder: binders[e]!,
-                                  title: e.toString(),
-                                ),
-                              ),
-                            );
-                          },
-                          child: SizedBox(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Text(e),
-                            ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 0.0),
+                      child: Card(
+                        child: SizedBox(
+                          height: 120,
+                          width: 120,
+                          child: Center(
+                            child: Text("Total Value: \$$totalValue"),
                           ),
                         ),
-                      );
-                    },
-                  ).toList(),
+                      ),
+                    ),
+                    const Divider(
+                      thickness: 1,
+                    ),
+                    Column(
+                      children: binders.keys.map<Card>(
+                        (e) {
+                          return Card(
+                            clipBehavior: Clip.hardEdge,
+                            child: InkWell(
+                              splashColor: Colors.red[600]?.withAlpha(30),
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SimpleDialog(
+                                      children: [
+                                        const Center(
+                                          child: Text(
+                                            "Delete this Binder?",
+                                            textScaleFactor: 1.2,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  deleteBinder(e.toString());
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text("Yes"),
+                                              ),
+                                              MaterialButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                color: Colors.red[600],
+                                                child: const Text("No"),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BinderPage(
+                                      binder: binders[e]!,
+                                      title: e.toString(),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                height: 75,
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        e,
+                                        textScaleFactor: 1.1,
+                                      ),
+                                      Text(
+                                        "\$${binderPrices[e]}",
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ).toList(),
+                    ),
+                  ],
                 );
               }
             },
